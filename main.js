@@ -5,26 +5,22 @@ var _ = require("lodash")
 
 
 var LaserBase = function(){
-  var self = this.constructor
+  this.db = this.constructor
+  this.tables = {}
+}
 
-  var create_table = function( table_name ){
-    this.tables[ table_name ] = new self.Table({
-      name: table_name,
-      db: this
-    });
-    // create shorthand access
-    this[ table_name ] = this.tables[ table_name ]
-  }
-
-  return {
-    tables: {},
-    create_table: create_table
-  }
+LaserBase.prototype.create_table = function( table_name ){
+  this.tables[ table_name ] = new LaserBase.Table({
+    table_name: table_name,
+    db_instance: this
+  });
+  // create shorthand access
+  this[ table_name ] = this.tables[ table_name ]
 }
 
 LaserBase.Table = function( opt ){
-  this.db = opt.db // back-reference
-  this.name = opt.name
+  this.db_instance = opt.db_instance // back-reference
+  this.table_name = opt.table_name
   this.data = []
   this.live_queries = []
   this.Resource = function( data ){
@@ -81,7 +77,7 @@ LaserBase.Table.prototype.find = function( id ) {
 }
 
 LaserBase.Table.prototype.has_many = function( relation_name, opt ) {
-  var related_table = this.db.tables[ relation_name ]
+  var related_table = this.db_instance.tables[ relation_name ]
 
   // allows to call relationship methods directly on Resource instance
   this.Resource.prototype[relation_name] = function() {
