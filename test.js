@@ -16,9 +16,35 @@ describe('LaserBase', function(){
 
   describe('create_collection', function(){
     it('should create a new collection', function(){
+      should.not.exist( DB.users )
       DB.create_collection('users')
       DB.users.should.be.instanceOf(Object)
       DB.users.live_queries.should.be.empty
+    })
+
+    it('should return pointer to the newly created collection', function(){
+      var result = DB.create_collection('omg')
+      result.should.equal( DB.omg )
+    })
+
+    it('should accept adapter as second argument', function(){
+      var MyAdapter = {}
+      DB.create_collection('things', MyAdapter).should.be.ok
+      DB.things.adapter.should.equal( MyAdapter )
+    })
+
+    // TODO: use proper stubs, not some boolean var magic!
+    it('should use save method coming from adapter', function(){
+      var exec = false
+      var mock_obj = { id:1, prop:'Foo' }
+      var MyAdapter = { save: function(){ exec = true } }
+      var coll = DB.create_collection('thingsss', MyAdapter)
+      coll.insert(mock_obj)
+      var obj = coll.find(1)
+      obj.should.eql(mock_obj)
+      exec.should.be.false
+      obj.save()
+      exec.should.be.true
     })
   })
 

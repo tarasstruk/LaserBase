@@ -20,28 +20,31 @@
     root.LaserBase = LaserBase;
   }
 
-  LaserBase.prototype.create_collection = function( collection_name ){
+  LaserBase.prototype.create_collection = function( collection_name, adapter ){
     this.collections[ collection_name ] = new LaserBase.Collection({
       collection_name: collection_name,
-      db_instance: this
+      db_instance: this,
+      adapter: adapter
     });
     // create shorthand access
     this[ collection_name ] = this.collections[ collection_name ]
+    return this.collections[ collection_name ]
   }
 
   LaserBase.Collection = function( opt ){
     this.db_instance = opt.db_instance // back-reference
     this.collection_name = opt.collection_name
+    this.adapter = opt.adapter
     this.data = []
     this.live_queries = []
     this.Resource = function( data ){
       // copy data as own attributes
       _.merge( this, data )
     }
-    this.Resource.prototype = LaserBase.Resource
+    this.Resource.prototype = this.adapter || LaserBase.DefaultResource
   }
 
-  LaserBase.Resource = {
+  LaserBase.DefaultResource = {
     delete: function() {},
     update: function() {},
     save: function() {}
