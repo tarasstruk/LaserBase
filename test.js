@@ -7,16 +7,16 @@ describe('LaserBase', function(){
 
   var DB = new LaserBase()
 
-  describe('tables', function(){
+  describe('collections', function(){
     it('should be an empty object', function(){
-      DB.tables.should.be.instanceOf(Object)
-      DB.tables.should.be.empty
+      DB.collections.should.be.instanceOf(Object)
+      DB.collections.should.be.empty
     })
   })
 
-  describe('create_table', function(){
+  describe('create_collection', function(){
     it('should create a new collection', function(){
-      DB.create_table('users')
+      DB.create_collection('users')
       DB.users.should.be.instanceOf(Object)
       DB.users.live_queries.should.be.empty
     })
@@ -91,8 +91,8 @@ describe('LaserBase', function(){
 
   describe('has_many', function(){
 
-    it('shouldnt throw any errors when table is declared', function(){
-      DB.create_table('todos')
+    it('shouldnt throw any errors when collection is declared', function(){
+      DB.create_collection('todos')
       DB.users.has_many('todos', { fkey: 'user_id' })
     })
 

@@ -5,7 +5,7 @@
 
   var LaserBase = function(){
     this.db = this.constructor
-    this.tables = {}
+    this.collections = {}
   }
 
   // Export the Underscore object for **Node.js**, with
@@ -20,18 +20,18 @@
     root.LaserBase = LaserBase;
   }
 
-  LaserBase.prototype.create_table = function( table_name ){
-    this.tables[ table_name ] = new LaserBase.Table({
-      table_name: table_name,
+  LaserBase.prototype.create_collection = function( collection_name ){
+    this.collections[ collection_name ] = new LaserBase.Collection({
+      collection_name: collection_name,
       db_instance: this
     });
     // create shorthand access
-    this[ table_name ] = this.tables[ table_name ]
+    this[ collection_name ] = this.collections[ collection_name ]
   }
 
-  LaserBase.Table = function( opt ){
+  LaserBase.Collection = function( opt ){
     this.db_instance = opt.db_instance // back-reference
-    this.table_name = opt.table_name
+    this.collection_name = opt.collection_name
     this.data = []
     this.live_queries = []
     this.Resource = function( data ){
@@ -47,31 +47,31 @@
     save: function() {}
   }
 
-  LaserBase.Table.prototype.insert = function( record ) {
-    var table = this;
+  LaserBase.Collection.prototype.insert = function( record ) {
+    var collection = this;
     if ( _.isArray( record ) ) {
       _.forEach( record, function( record ){
-        table.data.push( new table.Resource( record ) )
+        collection.data.push( new collection.Resource( record ) )
       })
     } else {
-      table.data.push( new table.Resource( record ) )
+      collection.data.push( new collection.Resource( record ) )
     }
 
-    table.update_live_queries();
+    collection.update_live_queries();
   }
 
-  LaserBase.Table.prototype.update_live_queries = function() {
-    var table = this
-    _.forEach( table.live_queries, function( query ) {
+  LaserBase.Collection.prototype.update_live_queries = function() {
+    var collection = this
+    _.forEach( collection.live_queries, function( query ) {
       query.result.length = 0 // in-place empty the array
       _.merge(
         query.result,
-        _.where( table.data, query.search_term )
+        _.where( collection.data, query.search_term )
       );
     })
   }
 
-  LaserBase.Table.prototype.where = function( search_term ) {
+  LaserBase.Collection.prototype.where = function( search_term ) {
     var result = _.where( this.data, search_term )
 
     // save reference to result object
@@ -83,18 +83,18 @@
   }
 
   // Get resource with matching ID
-  LaserBase.Table.prototype.find = function( id ) {
+  LaserBase.Collection.prototype.find = function( id ) {
     return _.find( this.data, { id: id } )
   }
 
-  LaserBase.Table.prototype.has_many = function( relation_name, opt ) {
-    var related_table = this.db_instance.tables[ relation_name ]
+  LaserBase.Collection.prototype.has_many = function( relation_name, opt ) {
+    var related_collection = this.db_instance.collections[ relation_name ]
 
     // allows to call relationship methods directly on Resource instance
     this.Resource.prototype[relation_name] = function() {
       var search_query = {}
       search_query[ opt.fkey ] = this.id
-      return related_table.where( search_query )
+      return related_collection.where( search_query )
     }
   }
 
