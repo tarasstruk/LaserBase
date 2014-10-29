@@ -1,0 +1,31 @@
+{
+  "name": "LaserBase",
+  "version": "0.0.1",
+  "description": "interface to restful API with live queries",
+  "main": "main.js",
+  "dependencies": {
+    "assert": "~1.1.2",
+    "lodash": "~2.4.1",
+    "should": "~4.1.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.0.1"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec --bail --check-leaks tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomaszGrzelak/LaserBase.git"
+  },
+  "keywords": [
+    "rest",
+    "livequeries",
+    "db"
+  ],
+  "author": "Tomasz Grzelak",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/TomaszGrzelak/LaserBase/issues"
+  }
+}
