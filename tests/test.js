@@ -1,7 +1,7 @@
 var assert = require("assert")
 var should = require("should")
 var _ = root._ = require("lodash")
-var LaserBase = require('./main.js')
+var LaserBase = require('../main.js')
 
 describe('LaserBase', function(){
 
