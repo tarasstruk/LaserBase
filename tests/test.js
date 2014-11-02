@@ -35,16 +35,15 @@ describe('LaserBase', function(){
 
     // TODO: use proper stubs, not some boolean var magic!
     it('should use save method coming from adapter', function(){
-      var exec = false
       var mock_obj = { id:1, prop:'Foo' }
-      var MyAdapter = { save: function(){ exec = true } }
+      var MyAdapter = { save: function(){ this.is_saved = true } }
       var coll = DB.create_collection('thingsss', MyAdapter)
       coll.insert(mock_obj)
       var obj = coll.find(1)
       obj.should.eql(mock_obj)
-      exec.should.be.false
+      assert.strictEqual(obj.is_saved, undefined)
       obj.save()
-      exec.should.be.true
+      obj.is_saved.should.be.true
     })
   })
 
